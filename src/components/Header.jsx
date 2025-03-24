@@ -5,7 +5,6 @@ import "./Header.css";
 function Header({ onAddTask }) {
   const [showModal, setShowModal] = useState(false);
 
-  // State for task details
   const [taskDetails, setTaskDetails] = useState({
     taskName: "",
     description: "",
@@ -19,25 +18,20 @@ function Header({ onAddTask }) {
     const { name, value } = e.target;
     setTaskDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value,  // Dynamically update task details based on input field name
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Console log for debugging to check if taskName is captured correctly
-    console.log("Task Details before submitting:", taskDetails);
-
-    // Check if task name is provided
     if (taskDetails.taskName.trim() === "") {
       alert("Task name is required!");
       return;
     }
 
-    onAddTask(taskDetails); // Pass task details to App.jsx's add task function
+    onAddTask(taskDetails);
 
-    // Reset task form and close modal
     setTaskDetails({
       taskName: "",
       description: "",
@@ -57,11 +51,19 @@ function Header({ onAddTask }) {
   return (
     <header className="header">
       <h1>To-Do List App</h1>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/archived">Archived Tasks</Link>
-        <button onClick={() => setShowModal(true)}>Add Task</button>
-        <button onClick={handleLogout}>Logout</button>
+      <nav className="nav-buttons">
+        <Link to="/">
+          <button className="styled-button">Home</button>
+        </Link>
+        <Link to="/archived">
+          <button className="styled-button">Archived Tasks</button>
+        </Link>
+        <button className="styled-button" onClick={() => setShowModal(true)}>
+          Add Task
+        </button>
+        <button className="styled-button" onClick={handleLogout}>
+          Logout
+        </button>
       </nav>
 
       {showModal && (

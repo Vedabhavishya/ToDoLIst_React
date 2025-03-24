@@ -1,83 +1,79 @@
-/* Header Styling */
 .header {
-  background-color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;  /* Dark header background */
   color: white;
-  padding: 10px;
-  text-align: center;
+  padding: 10px 20px;
 }
 
-.header nav a {
-  color: white;
-  margin-right: 15px;
-  text-decoration: none;
+.header h1 {
+  font-size: 24px;
 }
 
-.header button {
-  background-color: #007bff;
+.nav-buttons {
+  display: flex;
+  gap: 10px;  /* Space between buttons */
+}
+
+.styled-button {
+  background-color: #007bff;  /* Blue background */
   color: white;
   border: none;
-  padding: 8px 15px;
-  margin-left: 10px;
+  border-radius: 5px;  /* Rounded corners */
+  padding: 10px 20px;
+  font-size: 16px;
   cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);  /* 3D button shadow */
 }
 
-.header button:hover {
-  background-color: #0056b3;
+.styled-button:hover {
+  background-color: #0056b3;  /* Darker blue on hover */
 }
 
-/* Modal Styling */
+.styled-button:active {
+  background-color: #003f7f;  /* Darker on click */
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
 .modal-content {
   background-color: white;
   padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  width: 300px;
 }
 
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content form input,
-.modal-content form textarea,
-.modal-content form select {
+input, select, textarea {
   width: 100%;
-  padding: 8px;
   margin: 10px 0;
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.modal-content form button {
-  background-color: #007bff;
+button[type="submit"] {
+  background-color: #28a745;
   color: white;
+  padding: 10px;
   border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  margin-right: 10px;
+  border-radius: 5px;
 }
 
-.modal-content form button:hover {
-  background-color: #0056b3;
-}
-
-.modal-content form button[type="button"] {
-  background-color: #6c757d;
-}
-
-.modal-content form button[type="button"]:hover {
-  background-color: #5a6268;
+button[type="button"] {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
 }
