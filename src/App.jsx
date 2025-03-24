@@ -4,14 +4,13 @@ import Header from "./components/Header";
 import TaskList from "./components/TaskList";
 import ArchivedTasks from "./components/ArchivedTasks";
 import Login from "./components/Login";
-import Blank from "./components/Blank"; // Import Blank component
+import Blank from "./components/Blank";
 
 function App() {
   const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem("tasks")) || []);
   const [archivedTasks, setArchivedTasks] = useState(() => JSON.parse(localStorage.getItem("archivedTasks")) || []);
   const [userEmail, setUserEmail] = useState(() => localStorage.getItem("userEmail") || "");
 
-  // Save tasks and archived tasks to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -20,9 +19,10 @@ function App() {
     localStorage.setItem("archivedTasks", JSON.stringify(archivedTasks));
   }, [archivedTasks]);
 
-  // Add Task Function
+  // Add Task Function (Attach User Email)
   const addTask = (task) => {
-    setTasks([...tasks, { id: Date.now(), taskName: task.taskName, status: "Pending", ...task }]);
+    const taskWithUser = { ...task, id: Date.now(), email: userEmail, status: "Pending" }; // Attach email to task
+    setTasks([...tasks, taskWithUser]);
   };
 
   // Archive Task
@@ -43,27 +43,22 @@ function App() {
     }
   };
 
-  // Delete Archived Task Permanently
-  const deleteArchivedTask = (taskId) => {
-    const updatedArchivedTasks = archivedTasks.filter((task) => task.id !== taskId);
-    setArchivedTasks(updatedArchivedTasks);
-    localStorage.setItem("archivedTasks", JSON.stringify(updatedArchivedTasks));
-  };
-
   // Edit Task Status
   const editTaskStatus = (taskId, status) => {
     setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, status: status } : task
-      )
+      prevTasks.map((task) => (task.id === taskId ? { ...task, status: status } : task))
     );
   };
 
-  // Logout Handler
+  // Logout Handler (Clear User Email)
   const handleLogout = () => {
-    localStorage.removeItem("userEmail"); // Remove email from storage
-    setUserEmail(""); // Reset state, redirect user to Blank page
+    localStorage.removeItem("userEmail"); // Clear email on logout
+    setUserEmail(""); // Reset state
   };
+
+  // Filter tasks for the logged-in user only
+  const filteredTasks = tasks.filter((task) => task.email === userEmail);
+  const filteredArchivedTasks = archivedTasks.filter((task) => task.email === userEmail);
 
   return (
     <Router>
@@ -76,7 +71,7 @@ function App() {
                 path="/"
                 element={
                   <TaskList
-                    tasks={tasks}
+                    tasks={filteredTasks}
                     onEditTask={editTaskStatus}
                     onArchiveTask={archiveTask}
                   />
@@ -86,9 +81,8 @@ function App() {
                 path="/archived"
                 element={
                   <ArchivedTasks
-                    archivedTasks={archivedTasks}
+                    archivedTasks={filteredArchivedTasks}
                     onUndoTask={undoArchivedTask}
-                    onDeleteTask={deleteArchivedTask} // Pass delete function here
                   />
                 }
               />
@@ -98,8 +92,8 @@ function App() {
         ) : (
           <Routes>
             <Route path="/" element={<Login setUserEmail={setUserEmail} />} />
-            <Route path="/blank" element={<Blank />} /> {/* Render Blank page */}
-            <Route path="*" element={<Navigate to="/blank" />} /> {/* Redirect to Blank if logged out */}
+            <Route path="/blank" element={<Blank />} />
+            <Route path="*" element={<Navigate to="/blank" />} />
           </Routes>
         )}
       </div>
