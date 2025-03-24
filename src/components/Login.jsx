@@ -1,29 +1,29 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Login.css";
 
-function Login() {
+function Login({ setUserEmail }) {
   const [email, setEmail] = useState("");
-  const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     if (email) {
-      navigate("/tasks");
-    } else {
-      alert("Please enter your email!");
+      localStorage.setItem("userEmail", email); // Save email to localStorage
+      setUserEmail(email); // Set email in App state
     }
   };
 
   return (
     <div className="login-container">
       <h2>Login</h2>
-      <input
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 }

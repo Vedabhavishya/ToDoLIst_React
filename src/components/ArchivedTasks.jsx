@@ -1,38 +1,46 @@
 import React from "react";
-import "./ArchivedTasks.css";
+import "./ArchivedTasks.css"; // Assuming you already have some CSS here
 
-function ArchivedTasks({ archivedTasks, onUndoTask }) {
+function ArchivedTasks({ archivedTasks, onUndoTask, onDeleteTask }) {
   return (
-    <div>
+    <div className="archived-tasks-container">
       <h2>Archived Tasks</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Task Name</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Due Date</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+
+      {archivedTasks.length === 0 ? (
+        <p>No archived tasks yet.</p>
+      ) : (
+        <ul className="archived-task-list">
           {archivedTasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.taskName}</td> {/* Task Name should match your task object */}
-              <td>{task.description}</td>
-              <td>{task.category}</td>
-              <td>{task.dueDate}</td>
-              <td>{task.priority}</td>
-              <td>{task.status}</td>
-              <td>
-                <button onClick={() => onUndoTask(task.id)}>Undo</button>
-              </td>
-            </tr>
+            <li key={task.id} className="archived-task-item">
+              <div className="task-details">
+                <h3>{task.taskName}</h3>
+                <p>Description: {task.description}</p>
+                <p>Due Date: {task.dueDate}</p>
+                <p>Priority: {task.priority}</p>
+                <p>Status: {task.status}</p>
+              </div>
+
+              <div className="task-actions">
+                {/* Undo Task Button */}
+                <button
+                  className="undo-button"
+                  onClick={() => onUndoTask(task.id)}
+                >
+                  Undo
+                </button>
+
+                {/* Delete Task Button (Deletes task permanently) */}
+                <button
+                  className="delete-button"
+                  onClick={() => onDeleteTask(task.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ul>
+      )}
     </div>
   );
 }

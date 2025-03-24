@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./TaskList.css";
+import "./TaskList.css"; // Make sure TaskList.css has appropriate table styles.
 
 function TaskList({ tasks, onEditTask, onArchiveTask }) {
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
@@ -23,9 +23,9 @@ function TaskList({ tasks, onEditTask, onArchiveTask }) {
 
   const handleSaveStatus = (taskId) => {
     if (updatedStatus) {
-      onEditTask(taskId, updatedStatus); // Updating the task's status
+      onEditTask(taskId, updatedStatus);
     }
-    setEditingTaskId(null); // Exit edit mode after saving
+    setEditingTaskId(null);
     setUpdatedStatus("");
   };
 
@@ -47,64 +47,60 @@ function TaskList({ tasks, onEditTask, onArchiveTask }) {
       </div>
 
       <h2>Task List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Task Name</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Due Date</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.taskName}</td>
-              <td>{task.description}</td>
-              <td>{task.category}</td>
-              <td>{task.dueDate}</td>
-              <td>{task.priority}</td>
-              <td>
-                {editingTaskId === task.id ? (
-                  <select
-                    value={updatedStatus || task.status}
-                    onChange={handleStatusChange}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Ongoing">Ongoing</option>
-                    <option value="Completed">Completed</option>
-                  </select>
-                ) : (
-                  task.status
-                )}
-              </td>
-              <td>
-                {editingTaskId === task.id ? (
-                  <button onClick={() => handleSaveStatus(task.id)}>
-                    Save
-                  </button>
-                ) : (
-                  <>
-                    {(task.status === "Pending" || task.status === "Ongoing") && (
-                      <button onClick={() => setEditingTaskId(task.id)}>
-                        Edit
-                      </button>
-                    )}
-                    {task.status === "Completed" && (
-                      <button onClick={() => onArchiveTask(task.id)}>
-                        Archive
-                      </button>
-                    )}
-                  </>
-                )}
-              </td>
+      <div className="table-wrapper">
+        <table className="task-table">
+          <thead>
+            <tr>
+              <th>Task Name</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Due Date</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tasks.map((task) => (
+              <tr key={task.id}>
+                <td>{task.taskName}</td>
+                <td>{task.description}</td>
+                <td>{task.category}</td>
+                <td>{task.dueDate}</td>
+                <td>{task.priority}</td>
+                <td>
+                  {editingTaskId === task.id ? (
+                    <select
+                      value={updatedStatus || task.status}
+                      onChange={handleStatusChange}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Ongoing">Ongoing</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                  ) : (
+                    task.status
+                  )}
+                </td>
+                <td>
+                  {editingTaskId === task.id ? (
+                    <button onClick={() => handleSaveStatus(task.id)}>Save</button>
+                  ) : (
+                    <>
+                      {(task.status === "Pending" || task.status === "Ongoing") && (
+                        <button onClick={() => setEditingTaskId(task.id)}>Edit</button>
+                      )}
+                      {task.status === "Completed" && (
+                        <button onClick={() => onArchiveTask(task.id)}>Archive</button>
+                      )}
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

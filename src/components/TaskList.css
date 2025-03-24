@@ -1,7 +1,9 @@
+/* Task List Container */
 .task-list-container {
   padding: 20px;
 }
 
+/* Upcoming Deadlines Card */
 .upcoming-deadlines-card {
   background-color: #e8f5e9;
   padding: 15px;
@@ -22,4 +24,60 @@
 
 .upcoming-deadlines-card li {
   margin-bottom: 5px;
+}
+
+/* Task Table Styling */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-table th,
+.task-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.task-table th {
+  background-color: #1b5e20;  /* Matches the color scheme of deadlines card */
+  color: white;
+}
+
+.task-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.task-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Button Styling */
+button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #4caf50; /* Primary button color */
+  color: white;
+}
+
+button:hover {
+  background-color: #388e3c; /* Darker green for hover effect */
+}
+
+/* Conditional Button Styling */
+button.archive-button {
+  background-color: #e53935; /* Archive button in red */
+}
+
+button.archive-button:hover {
+  background-color: #b71c1c;
 }
