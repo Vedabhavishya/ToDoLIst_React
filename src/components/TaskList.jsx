@@ -1,37 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./TaskList.css";
 
-function TaskList({ tasks, onArchiveTask, onUpdateTask }) {
-  const [editableTask, setEditableTask] = useState(null);
-  const [editedStatus, setEditedStatus] = useState("");
+function TaskList({ tasks, onEditTask, onArchiveTask }) {
+  const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [updatedStatus, setUpdatedStatus] = useState("");
 
-  const handleEdit = (task) => {
-    setEditableTask(task.id); // Track the task being edited
-    setEditedStatus(task.status); // Set current status in editable state
-  };
-
-  const handleSave = (task) => {
-    onUpdateTask(task.id, editedStatus); // Update the task status
-    setEditableTask(null); // Exit edit mode after saving
-  };
+  useEffect(() => {
+    const today = new Date();
+    const filteredTasks = tasks.filter((task) => {
+      const taskDueDate = new Date(task.dueDate);
+      const timeDiff = taskDueDate - today;
+      const daysLeft = timeDiff / (1000 * 60 * 60 * 24);
+      return daysLeft > 0 && daysLeft <= 7;
+    });
+    setUpcomingDeadlines(filteredTasks);
+  }, [tasks]);
 
   const handleStatusChange = (e) => {
-    setEditedStatus(e.target.value); // Track changes in the status dropdown
+    setUpdatedStatus(e.target.value);
   };
 
-  const renderStatusDropdown = () => (
-    <select value={editedStatus} onChange={handleStatusChange}>
-      <option value="Pending">Pending</option>
-      <option value="Ongoing">Ongoing</option>
-      <option value="Completed">Completed</option>
-    </select>
-  );
+  const handleSaveStatus = (taskId) => {
+    if (updatedStatus) {
+      onEditTask(taskId, updatedStatus); // Updating the task's status
+    }
+    setEditingTaskId(null); // Exit edit mode after saving
+    setUpdatedStatus("");
+  };
 
   return (
     <div className="task-list-container">
-      <h2>Upcoming Activities</h2>
+      <div className="upcoming-deadlines-card">
+        <h3>Upcoming Deadlines</h3>
+        {upcomingDeadlines.length === 0 ? (
+          <p>No upcoming deadlines ahead!</p>
+        ) : (
+          <ul>
+            {upcomingDeadlines.map((task) => (
+              <li key={task.id}>
+                <strong>{task.taskName}</strong> - Due on {task.dueDate}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-      <table className="task-table">
+      <h2>Task List</h2>
+      <table>
         <thead>
           <tr>
             <th>Task Name</th>
@@ -43,45 +59,50 @@ function TaskList({ tasks, onArchiveTask, onUpdateTask }) {
             <th>Actions</th>
           </tr>
         </thead>
-
         <tbody>
-          {tasks.length === 0 ? (
-            <tr>
-              <td colSpan="7">No upcoming activities ahead!</td>
+          {tasks.map((task) => (
+            <tr key={task.id}>
+              <td>{task.taskName}</td>
+              <td>{task.description}</td>
+              <td>{task.category}</td>
+              <td>{task.dueDate}</td>
+              <td>{task.priority}</td>
+              <td>
+                {editingTaskId === task.id ? (
+                  <select
+                    value={updatedStatus || task.status}
+                    onChange={handleStatusChange}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                ) : (
+                  task.status
+                )}
+              </td>
+              <td>
+                {editingTaskId === task.id ? (
+                  <button onClick={() => handleSaveStatus(task.id)}>
+                    Save
+                  </button>
+                ) : (
+                  <>
+                    {(task.status === "Pending" || task.status === "Ongoing") && (
+                      <button onClick={() => setEditingTaskId(task.id)}>
+                        Edit
+                      </button>
+                    )}
+                    {task.status === "Completed" && (
+                      <button onClick={() => onArchiveTask(task.id)}>
+                        Archive
+                      </button>
+                    )}
+                  </>
+                )}
+              </td>
             </tr>
-          ) : (
-            tasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.taskName}</td> {/* Fixed task name display */}
-                <td>{task.description}</td>
-                <td>{task.category}</td>
-                <td>{task.dueDate}</td>
-                <td>{task.priority}</td>
-
-                {/* Editable Status Column */}
-                <td>
-                  {editableTask === task.id
-                    ? renderStatusDropdown()
-                    : task.status}
-                </td>
-
-                <td>
-                  {editableTask === task.id ? (
-                    <button onClick={() => handleSave(task)}>Save</button>
-                  ) : (
-                    <button onClick={() => handleEdit(task)}>Edit</button>
-                  )}
-
-                  {/* Archive Button for Completed Tasks */}
-                  {task.status === "Completed" && (
-                    <button onClick={() => onArchiveTask(task.id)}>
-                      Archive
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
     </div>

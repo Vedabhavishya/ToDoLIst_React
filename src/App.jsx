@@ -8,27 +8,39 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [archivedTasks, setArchivedTasks] = useState([]);
 
-  // Add Task Function (ensure task.name is explicitly set)
+  // Add Task Function (ensure task object has 'status')
   const addTask = (task) => {
-    setTasks([...tasks, { id: Date.now(), name: task.name, status: "Pending", ...task }]);
+    setTasks([
+      ...tasks,
+      { id: Date.now(), taskName: task.taskName, status: "Pending", ...task },
+    ]);
   };
 
-  // Archive Task (preserve full task object, including 'name')
+  // Archive Task Function (move task to archivedTasks)
   const archiveTask = (taskId) => {
     const taskToArchive = tasks.find((task) => task.id === taskId);
     if (taskToArchive) {
-      setArchivedTasks([...archivedTasks, { ...taskToArchive }]); // Preserve the full task object
-      setTasks(tasks.filter((task) => task.id !== taskId)); // Remove task from active tasks
+      setArchivedTasks([...archivedTasks, { ...taskToArchive }]);
+      setTasks(tasks.filter((task) => task.id !== taskId)); // Remove from active tasks
     }
   };
 
-  // Undo Archived Task (restore the full task object)
+  // Undo Archived Task (move back from archivedTasks to tasks)
   const undoArchivedTask = (taskId) => {
     const taskToUndo = archivedTasks.find((task) => task.id === taskId);
     if (taskToUndo) {
       setTasks([...tasks, { ...taskToUndo }]);
       setArchivedTasks(archivedTasks.filter((task) => task.id !== taskId));
     }
+  };
+
+  // Edit Task Function to update the task's status
+  const editTaskStatus = (taskId, status) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, status: status } : task
+      )
+    );
   };
 
   return (
@@ -41,14 +53,8 @@ function App() {
             element={
               <TaskList
                 tasks={tasks}
+                onEditTask={editTaskStatus}
                 onArchiveTask={archiveTask}
-                onUpdateTask={(taskId, status) =>
-                  setTasks((prevTasks) =>
-                    prevTasks.map((task) =>
-                      task.id === taskId ? { ...task, status } : task
-                    )
-                  )
-                }
               />
             }
           />

@@ -1,17 +1,25 @@
-.task-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
+.task-list-container {
+  padding: 20px;
 }
 
-.task-table th,
-.task-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+.upcoming-deadlines-card {
+  background-color: #e8f5e9;
+  padding: 15px;
+  border: 2px solid #1b5e20;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #1b5e20;
 }
 
-.task-table th {
-  background-color: #007bff;
-  color: white;
+.upcoming-deadlines-card h3 {
+  margin: 0 0 10px 0;
+}
+
+.upcoming-deadlines-card ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.upcoming-deadlines-card li {
+  margin-bottom: 5px;
 }
