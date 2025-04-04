@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import Header from "./components/Header";
 import TaskList from "./components/TaskList";
 import ArchivedTasks from "./components/ArchivedTasks";
+import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Blank from "./components/Blank";
 
@@ -19,9 +20,13 @@ function App() {
     localStorage.setItem("archivedTasks", JSON.stringify(archivedTasks));
   }, [archivedTasks]);
 
-  // Add Task Function (Attach User Email)
+  // Filter tasks based on logged-in user
+  const filteredTasks = tasks.filter((task) => task.email === userEmail);
+  const filteredArchivedTasks = archivedTasks.filter((task) => task.email === userEmail);
+
+  // Add Task
   const addTask = (task) => {
-    const taskWithUser = { ...task, id: Date.now(), email: userEmail, status: "Pending" }; // Attach email to task
+    const taskWithUser = { ...task, id: Date.now(), email: userEmail, status: "Pending" };
     setTasks([...tasks, taskWithUser]);
   };
 
@@ -29,7 +34,7 @@ function App() {
   const archiveTask = (taskId) => {
     const taskToArchive = tasks.find((task) => task.id === taskId);
     if (taskToArchive) {
-      setArchivedTasks([...archivedTasks, { ...taskToArchive }]);
+      setArchivedTasks([...archivedTasks, taskToArchive]);
       setTasks(tasks.filter((task) => task.id !== taskId));
     }
   };
@@ -38,7 +43,7 @@ function App() {
   const undoArchivedTask = (taskId) => {
     const taskToUndo = archivedTasks.find((task) => task.id === taskId);
     if (taskToUndo) {
-      setTasks([...tasks, { ...taskToUndo }]);
+      setTasks([...tasks, taskToUndo]);
       setArchivedTasks(archivedTasks.filter((task) => task.id !== taskId));
     }
   };
@@ -46,56 +51,47 @@ function App() {
   // Edit Task Status
   const editTaskStatus = (taskId, status) => {
     setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === taskId ? { ...task, status: status } : task))
+      prevTasks.map((task) => (task.id === taskId ? { ...task, status } : task))
     );
   };
 
-  // Logout Handler (Clear User Email)
+  // Logout Handler
   const handleLogout = () => {
-    localStorage.removeItem("userEmail"); // Clear email on logout
-    setUserEmail(""); // Reset state
+    localStorage.removeItem("userEmail"); // Remove user session
+    setUserEmail(""); // Reset UI state
+    setTasks([]); // Clear tasks from UI
+    setArchivedTasks([]); // Clear archived tasks from UI
   };
-
-  // Filter tasks for the logged-in user only
-  const filteredTasks = tasks.filter((task) => task.email === userEmail);
-  const filteredArchivedTasks = archivedTasks.filter((task) => task.email === userEmail);
 
   return (
     <Router>
-      <div className="App">
-        {userEmail ? (
-          <>
-            <Header onAddTask={addTask} onLogout={handleLogout} />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <TaskList
-                    tasks={filteredTasks}
-                    onEditTask={editTaskStatus}
-                    onArchiveTask={archiveTask}
-                  />
-                }
-              />
-              <Route
-                path="/archived"
-                element={
-                  <ArchivedTasks
-                    archivedTasks={filteredArchivedTasks}
-                    onUndoTask={undoArchivedTask}
-                  />
-                }
-              />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </>
-        ) : (
+      <div className="app-container">
+        {userEmail && <Header onAddTask={addTask} onLogout={handleLogout} />}
+        
+        <div className="content">
           <Routes>
-            <Route path="/" element={<Login setUserEmail={setUserEmail} />} />
-            <Route path="/blank" element={<Blank />} />
-            <Route path="*" element={<Navigate to="/blank" />} />
+            {userEmail ? (
+              <>
+                <Route
+                  path="/"
+                  element={<TaskList tasks={filteredTasks} onEditTask={editTaskStatus} onArchiveTask={archiveTask} />}
+                />
+                <Route
+                  path="/archived"
+                  element={<ArchivedTasks archivedTasks={filteredArchivedTasks} onUndoTask={undoArchivedTask} />}
+                />
+                <Route path="*" element={<Navigate to="/" />} />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<Login setUserEmail={setUserEmail} />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </>
+            )}
           </Routes>
-        )}
+        </div>
+
+        <Footer /> {/* Footer will always be visible */}
       </div>
     </Router>
   );

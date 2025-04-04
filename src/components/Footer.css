@@ -1,9 +1,21 @@
-.footer-container {
-  background-color: #f8f9fa;
+.footer {
+  background-color: hwb(0 7% 93% / 0.893);
+  color: white;
   text-align: center;
-  padding: 10px;
+  padding: 10px 0;
   position: fixed;
   bottom: 0;
   width: 100%;
-  border-top: 1px solid #ddd;
+  height: 40px;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding-bottom: 50px; 
 }
